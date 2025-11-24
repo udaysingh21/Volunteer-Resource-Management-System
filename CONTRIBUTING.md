@@ -20,7 +20,7 @@ VRMS/
 ├── analytics-service/
 ├── frontend/
 ├── docker-compose.yml
-├── docs/
+├── CONTRIBUTING.md
 └── README.md
 ```
 

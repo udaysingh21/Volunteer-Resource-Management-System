@@ -25,7 +25,7 @@ VRMS/
 ├── analytics-service/
 ├── frontend/
 ├── docker-compose.yml
-├── docs/
+├── CONTRIBUTING.md
 └── README.md
 ```
 
@@ -35,7 +35,7 @@ Each directory is a Git submodule, pointing to its own repository.
 
 ## Getting Started
 
-### 1️⃣ Clone the VRMS Platform (Important: include submodules)
+### Clone the VRMS Platform (Important: include submodules)
 
 ```bash
 git clone --recurse-submodules https://github.com/YOUR_ORG/VRMS.git

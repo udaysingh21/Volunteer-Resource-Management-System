@@ -38,7 +38,7 @@ Each directory is a Git submodule, pointing to its own repository.
 ### Clone the VRMS Platform (Important: include submodules)
 
 ```bash
-git clone --recurse-submodules https://github.com/YOUR_ORG/VRMS.git
+git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System.git
 cd VRMS
 ```
 

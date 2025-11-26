@@ -39,7 +39,7 @@ Each directory is a Git submodule, pointing to its own repository.
 
 ```bash
 git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System
-cd VRMS
+cd Volunteer-Resource-Management-System
 ```
 
 If you accidentally cloned without submodules:

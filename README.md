@@ -40,10 +40,12 @@ Each directory is a Git submodule, pointing to its own repository.
 The fastest way to run the entire VRMS platform locally:
 
 ```bash
+git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System.git
 # Clone the repository
 git clone <repository-url>
 cd Volunteer-Resource-Management-System
 git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System
+cd Volunteer-Resource-Management-System
 ```
 
 # Start all services

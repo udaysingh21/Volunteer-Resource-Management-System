@@ -1,0 +1,33 @@
+meta {
+  name: VRMS Microservices API Collection
+  type: collection
+  version: 1.0.0
+}
+
+vars {
+  base_url: http://localhost:8085
+  user_service_url: http://localhost:8085/users
+  ngo_service_url: http://localhost:8085/postings
+  matching_service_url: http://localhost:8085/match
+  analytics_service_url: http://localhost:8085/analytics
+  
+  # Auth tokens (set these after login)
+  volunteer_token: 
+  ngo_token: 
+  admin_token: 
+  
+  # Sample IDs for testing
+  volunteer_id: 1
+  ngo_id: 2
+  posting_id: 1
+}
+
+auth {
+  mode: bearer
+  token: {{volunteer_token}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}

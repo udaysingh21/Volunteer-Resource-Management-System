@@ -1,0 +1,17 @@
+meta {
+  name: Unregister Volunteer from Posting
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{ngo_service_url}}/api/v1/postings/{{posting_id}}/unregister/{{volunteer_id}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Should unregister volunteer successfully", function() {
+    expect(res.status).to.equal(200);
+  });
+}

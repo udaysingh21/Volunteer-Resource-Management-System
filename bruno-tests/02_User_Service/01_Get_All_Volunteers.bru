@@ -1,0 +1,23 @@
+meta {
+  name: Get All Volunteers
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{user_service_url}}/api/v1/users/volunteers?page=0&size=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 0
+  size: 10
+}
+
+tests {
+  test("Should retrieve volunteers", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an("array");
+  });
+}

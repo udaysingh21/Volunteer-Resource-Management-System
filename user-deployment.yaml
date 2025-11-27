@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vrms-user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vrms-user-service
+  template:
+    metadata:
+      labels:
+        app: vrms-user-service
+    spec:
+      containers:
+        - name: vrms-user-service
+          image: uday988/vrms-user-service:1.0
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always

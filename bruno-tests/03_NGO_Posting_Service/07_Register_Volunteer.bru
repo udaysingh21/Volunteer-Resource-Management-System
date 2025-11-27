@@ -1,0 +1,17 @@
+meta {
+  name: Register Volunteer for Posting
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{ngo_service_url}}/api/v1/postings/{{posting_id}}/register/{{volunteer_id}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Should register volunteer successfully", function() {
+    expect(res.status).to.equal(200);
+  });
+}

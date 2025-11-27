@@ -1,0 +1,39 @@
+meta {
+  name: Update Posting
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{ngo_service_url}}/api/v1/postings/{{posting_id}}
+  body: json
+  auth: bearer
+  token: {{ngo_token}}
+}
+
+body:json {
+  {
+    "title": "Community Garden Volunteer Program - Updated",
+    "description": "Join us in creating a sustainable community garden that will provide fresh produce for local families in need. This hands-on opportunity involves planting, weeding, watering, and harvesting vegetables. Now includes composting workshops every Saturday!",
+    "domain": "Environment",
+    "location": "Green Valley Community Center - Main Garden",
+    "city": "Greenville",
+    "state": "California", 
+    "country": "USA",
+    "pincode": "90210",
+    "effortRequired": "Physical work, 4-6 hours per session, composting knowledge helpful",
+    "volunteersNeeded": 20,
+    "startDate": "2024-12-15",
+    "endDate": "2025-04-15",
+    "contactEmail": "garden@helpinghands.org",
+    "contactPhone": "+1-555-GARDEN"
+  }
+}
+
+tests {
+  test("Should update posting successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.title).to.contain("Updated");
+    expect(res.body.volunteersNeeded).to.equal(20);
+  });
+}

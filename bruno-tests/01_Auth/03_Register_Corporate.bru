@@ -1,0 +1,40 @@
+meta {
+  name: Register Corporate
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{user_service_url}}/api/v1/users/register/corporate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "csr@techcorp.com",
+    "password": "CorpSecure789!",
+    "name": "TechCorp Industries",
+    "phone": "+1-800-555-0123",
+    "address": "789 Business Blvd, Corporate City, USA",
+    "role": "CORPORATE",
+    "registrationNumber": "CORP-2024-001",
+    "industry": "Technology",
+    "csrFocusAreas": [
+      "Education",
+      "Digital Literacy",
+      "Environment",
+      "Community Development"
+    ],
+    "budgetAllocated": 100000.00,
+    "websiteUrl": "https://www.techcorp.com"
+  }
+}
+
+tests {
+  test("Should register corporate successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.email).to.equal("csr@techcorp.com");
+    expect(res.body.role).to.equal("CORPORATE");
+  });
+}

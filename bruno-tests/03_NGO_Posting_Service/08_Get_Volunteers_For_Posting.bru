@@ -1,0 +1,19 @@
+meta {
+  name: Get Volunteers for Posting
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{ngo_service_url}}/api/v1/postings/{{posting_id}}/volunteers
+  body: none
+  auth: bearer
+  token: {{ngo_token}}
+}
+
+tests {
+  test("Should retrieve volunteers for posting", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an("array");
+  });
+}

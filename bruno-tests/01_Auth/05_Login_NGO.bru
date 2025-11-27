@@ -1,0 +1,32 @@
+meta {
+  name: Login NGO
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{user_service_url}}/api/v1/users/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "helpinghands@ngo.org",
+    "password": "NGOSecure456!"
+  }
+}
+
+script:post-response {
+  if (res.status === 200 && res.body.accessToken) {
+    bru.setEnvVar("ngo_token", res.body.accessToken);
+  }
+}
+
+tests {
+  test("Should login NGO successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("accessToken");
+    expect(res.body.role).to.equal("NGO");
+  });
+}

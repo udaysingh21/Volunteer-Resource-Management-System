@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Databases
   mysql:
@@ -40,18 +38,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Logging
-  loki:
-    image: grafana/loki:latest
-    container_name: vrms-loki
-    ports:
-      - "3100:3100"
-    volumes:
-      - loki_data:/loki
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - vrms-network
-
   # Microservices
   user-service:
     build:
@@ -67,20 +53,11 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - JWT_SECRET=dGhpc19pc19hX3Zlcnlfc2VjdXJlX2RlZmF1bHRfa2V5X2Zvcl9kZXZlbG9wbWVudF91c2Vfb25seQ==
       - SERVER_PORT=8080
-      - LOKI_URL=http://loki:3100
     depends_on:
       mysql:
         condition: service_healthy
-      loki:
-        condition: service_started
     networks:
       - vrms-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8080/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   ngo-posting-service:
     build:
@@ -105,12 +82,6 @@ services:
         condition: service_healthy
     networks:
       - vrms-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8082/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   matching-service:
     build:
@@ -127,18 +98,10 @@ services:
       - SPRING_CACHE_TYPE=simple
       - JWT_SECRET=dGhpc19pc19hX3Zlcnlfc2VjdXJlX2RlZmF1bHRfa2V5X2Zvcl9kZXZlbG9wbWVudF91c2Vfb25seQ==
     depends_on:
-      user-service:
-        condition: service_healthy
-      ngo-posting-service:
-        condition: service_healthy
+      - user-service
+      - ngo-posting-service
     networks:
       - vrms-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8081/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   analytics-service:
     build:
@@ -146,7 +109,7 @@ services:
       dockerfile: dockerfile
     container_name: vrms-analytics-service
     ports:
-      - "8000:8000"
+      - "8000:8005"
     environment:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
@@ -157,12 +120,6 @@ services:
         condition: service_healthy
     networks:
       - vrms-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8000/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
 
   frontend:
     build:
@@ -172,6 +129,8 @@ services:
     ports:
       - "5174:5174"
     environment:
+      - VITE_API_GATEWAY_URL=http://localhost:8085
+      - VITE_USE_API_GATEWAY=true
       - VITE_API_BASE_URL=http://localhost:8080
       - VITE_NGO_API_URL=http://localhost:8082
       - VITE_MATCHING_API_URL=http://localhost:8081
@@ -184,10 +143,23 @@ services:
     networks:
       - vrms-network
 
+  api-gateway:
+    build: ./api-gateway
+    container_name: vrms-api-gateway
+    ports:
+      - "8085:80"
+    depends_on:
+      - user-service
+      - ngo-posting-service
+      - matching-service
+      - analytics-service
+    networks:
+      - vrms-network
+
+
 volumes:
   mysql_data:
   postgres_data:
-  loki_data:
 
 networks:
   vrms-network:

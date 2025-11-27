@@ -1,0 +1,22 @@
+meta {
+  name: Get Volunteers Per Posting
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{analytics_service_url}}/api/v1/admin/analytics/volunteers-per-posting/{{posting_id}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Should get volunteers for specific posting", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("postingId");
+    expect(res.body).to.have.property("postingTitle");
+    expect(res.body).to.have.property("totalVolunteersRegistered");
+    expect(res.body).to.have.property("volunteers");
+    expect(res.body.volunteers).to.be.an("array");
+  });
+}

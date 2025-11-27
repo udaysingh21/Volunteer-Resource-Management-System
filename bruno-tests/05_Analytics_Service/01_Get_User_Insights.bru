@@ -1,0 +1,24 @@
+meta {
+  name: Get User Insights
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{analytics_service_url}}/api/v1/admin/analytics/user-insights
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Should get user analytics insights", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("total_users");
+    expect(res.body).to.have.property("volunteers");
+    expect(res.body).to.have.property("ngos");
+    expect(res.body).to.have.property("corporates");
+    expect(res.body).to.have.property("admins");
+    expect(res.body).to.have.property("role_distribution");
+    expect(res.body.role_distribution).to.be.an("array");
+  });
+}

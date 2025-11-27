@@ -1,0 +1,48 @@
+meta {
+  name: Register Volunteer
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{user_service_url}}/api/v1/users/register/volunteer
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "john.volunteer@example.com",
+    "password": "SecurePass123!",
+    "name": "John Volunteer",
+    "phone": "+1-234-567-8900",
+    "address": "123 Main St, Anytown, USA",
+    "role": "VOLUNTEER",
+    "dob": "1995-05-15",
+    "gender": "Male",
+    "skills": [
+      "Communication",
+      "Event Management",
+      "Teaching",
+      "Community Outreach"
+    ],
+    "interests": [
+      "Education",
+      "Environment",
+      "Health"
+    ],
+    "availability": "Weekends and evenings",
+    "languages": [
+      "English",
+      "Spanish"
+    ]
+  }
+}
+
+tests {
+  test("Should register volunteer successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.email).to.equal("john.volunteer@example.com");
+    expect(res.body.role).to.equal("VOLUNTEER");
+  });
+}

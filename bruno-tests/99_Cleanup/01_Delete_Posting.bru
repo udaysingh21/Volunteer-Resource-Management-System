@@ -1,0 +1,18 @@
+meta {
+  name: Delete Posting
+  type: http
+  seq: 99
+}
+
+delete {
+  url: {{ngo_service_url}}/api/v1/postings/{{posting_id}}
+  body: none
+  auth: bearer
+  token: {{ngo_token}}
+}
+
+tests {
+  test("Should delete posting successfully", function() {
+    expect(res.status).to.equal(204);
+  });
+}

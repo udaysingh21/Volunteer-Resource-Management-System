@@ -1,0 +1,23 @@
+meta {
+  name: Get Recommended Postings
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{matching_service_url}}/api/v1/matching/recommend/{{volunteer_id}}?location=Greenville&domain=Environment
+  body: none
+  auth: inherit
+}
+
+params:query {
+  location: Greenville
+  domain: Environment
+}
+
+tests {
+  test("Should get recommended postings", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an("array");
+  });
+}

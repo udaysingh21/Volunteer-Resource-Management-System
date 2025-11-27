@@ -1,0 +1,36 @@
+meta {
+  name: Register NGO
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{user_service_url}}/api/v1/users/register/ngo
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "helpinghands@ngo.org",
+    "password": "NGOSecure456!",
+    "name": "Helping Hands Foundation",
+    "phone": "+1-555-123-4567",
+    "address": "456 Charity Lane, Goodville, USA",
+    "role": "NGO",
+    "registrationNumber": "NGO-2024-001",
+    "foundedYear": 2018,
+    "sector": "Education & Community Development",
+    "websiteUrl": "https://www.helpinghands.org",
+    "missionStatement": "Empowering communities through education, healthcare, and sustainable development programs.",
+    "verificationStatus": "PENDING"
+  }
+}
+
+tests {
+  test("Should register NGO successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.email).to.equal("helpinghands@ngo.org");
+    expect(res.body.role).to.equal("NGO");
+  });
+}

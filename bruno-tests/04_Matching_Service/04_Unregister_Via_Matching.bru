@@ -1,0 +1,20 @@
+meta {
+  name: Unregister via Matching Service
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{matching_service_url}}/api/v1/matching/unregister/{{volunteer_id}}/{{posting_id}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Should unregister volunteer via matching service", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("message");
+    expect(res.body).to.have.property("volunteerId");
+    expect(res.body).to.have.property("postingId");
+  });
+}

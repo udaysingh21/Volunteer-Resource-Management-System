@@ -1,0 +1,46 @@
+meta {
+  name: Create NGO Posting
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{ngo_service_url}}/api/v1/postings
+  body: json
+  auth: bearer
+  token: {{ngo_token}}
+}
+
+body:json {
+  {
+    "title": "Community Garden Volunteer Program",
+    "description": "Join us in creating a sustainable community garden that will provide fresh produce for local families in need. This hands-on opportunity involves planting, weeding, watering, and harvesting vegetables. Volunteers will learn about sustainable farming practices, composting, and community engagement. Perfect for those passionate about environmental conservation and community service.",
+    "domain": "Environment",
+    "location": "Green Valley Community Center",
+    "city": "Greenville",
+    "state": "California",
+    "country": "USA",
+    "pincode": "90210",
+    "effortRequired": "Physical work, 4-6 hours per session",
+    "volunteersNeeded": 15,
+    "startDate": "2024-12-15",
+    "endDate": "2025-03-15",
+    "contactEmail": "garden@helpinghands.org",
+    "contactPhone": "+1-555-GARDEN"
+  }
+}
+
+tests {
+  test("Should create posting successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property("id");
+    expect(res.body.title).to.equal("Community Garden Volunteer Program");
+    expect(res.body.domain).to.equal("Environment");
+  });
+  
+  test("Should set posting_id variable", function() {
+    if (res.status === 201 && res.body.id) {
+      bru.setEnvVar("posting_id", res.body.id.toString());
+    }
+  });
+}

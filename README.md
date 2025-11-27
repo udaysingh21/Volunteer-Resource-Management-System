@@ -1,6 +1,7 @@
 # Volunteer Resource Management System (VRMS)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<a href="https://cla-assistant.io/udaysingh21/Volunteer-Resource-Management-System"><img src="https://cla-assistant.io/readme/badge/udaysingh21/Volunteer-Resource-Management-System" alt="CLA assistant" /></a>
 
 VRMS is an open-source platform designed to connect volunteers, NGOs, and corporate organizations. The system follows a microservices architecture, with each service maintained as its own independent repository.
 
@@ -154,7 +155,8 @@ Please follow these steps:
 1. Clone with submodules
 2. Make changes inside the microservice repo folder
 3. Open pull requests in that microservice's repo
-4. After merge, update the submodule pointer in VRMS
+4.  Sign our [Contributor License Agreement (CLA)]([CLA.md](https://cla-assistant.io/udaysingh21/Volunteer-Resource-Management-System)).All contributors must sign the CLA before pull requests can be merged. You'll be guided through this automatically when you open your first PR.
+5. After merge, update the submodule pointer in VRMS
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
@@ -194,3 +196,4 @@ Thanks to all contributors helping build technology that empowers volunteers, NG
 For questions or collaboration opportunities, please open an issue or reach out to the maintainers.
 
 **Happy Contributing! 🎉**
+

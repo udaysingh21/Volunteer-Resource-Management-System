@@ -33,8 +33,8 @@ Each folder above is a **submodule**, pointing to its own independent repository
 To correctly clone the VRMS meta-repo with all microservices:
 
 ```bash
-git clone --recurse-submodules https://github.com/YOUR_ORG/VRMS.git
-cd VRMS
+git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System.git
+cd Volunteer-Resource-Management-System
 ```
 
 If you cloned without submodules, run:
@@ -42,6 +42,12 @@ If you cloned without submodules, run:
 ```bash
 git submodule update --init --recursive
 ```
+
+## Forking the Project
+
+- Click on the Fork button of the top right corner
+- Give the repository name and discription
+- Start your own OSS!
 
 ---
 

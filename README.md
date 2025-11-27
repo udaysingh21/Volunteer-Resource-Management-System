@@ -44,7 +44,6 @@ The fastest way to run the entire VRMS platform locally:
 git clone <repository-url>
 cd Volunteer-Resource-Management-System
 git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System
-cd VRMS
 ```
 
 # Start all services

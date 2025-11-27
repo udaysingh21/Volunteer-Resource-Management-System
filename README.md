@@ -45,7 +45,7 @@ git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource
 git clone <repository-url>
 cd Volunteer-Resource-Management-System
 git clone --recurse-submodules https://github.com/udaysingh21/Volunteer-Resource-Management-System
-cd VRMS
+cd Volunteer-Resource-Management-System
 ```
 
 # Start all services

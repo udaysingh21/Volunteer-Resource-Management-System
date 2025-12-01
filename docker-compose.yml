@@ -1,4 +1,4 @@
-version: '3.8'
+# Docker Compose version is now optional
 
 services:
   # Databases
@@ -29,13 +29,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ngo_posting_db
     ports:
-      - "5434:5434"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - vrms-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5432"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,6 +49,7 @@ services:
     volumes:
       - loki_data:/loki
     command: -config.file=/etc/loki/local-config.yaml
+    user: "0:0"
     networks:
       - vrms-network
 
@@ -71,16 +72,14 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      loki:
-        condition: service_started
     networks:
       - vrms-network
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      test: ["CMD", "sh", "-c", "curl -s http://localhost:8080 > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 60s
+      retries: 3
+      start_period: 30s
 
   ngo-posting-service:
     build:
@@ -106,11 +105,11 @@ services:
     networks:
       - vrms-network
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8082/actuator/health || exit 1"]
+      test: ["CMD", "sh", "-c", "curl -s http://localhost:8082 > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 60s
+      retries: 3
+      start_period: 30s
 
   matching-service:
     build:
@@ -134,11 +133,11 @@ services:
     networks:
       - vrms-network
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8081/actuator/health || exit 1"]
+      test: ["CMD", "sh", "-c", "curl -s http://localhost:8081 > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 60s
+      retries: 3
+      start_period: 30s
 
   analytics-service:
     build:

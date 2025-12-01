@@ -1,0 +1,361 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vrms
+
+---
+# Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vrms-secrets
+  namespace: vrms
+type: Opaque
+stringData:
+  MYSQL_ROOT_PASSWORD: "root"
+  POSTGRES_PASSWORD: "postgres"
+  JWT_SECRET: "dGhpc19pc19hX3Zlcnlfc2VjdXJlX2RlZmF1bHRfa2V5X2Zvcl9kZXZlbG9wbWVudF91c2Vfb25seQ=="
+
+---
+# MySQL Database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_DATABASE
+          value: "userdb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: vrms
+spec:
+  selector:
+    app: mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+
+---
+# PostgreSQL Database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        - name: POSTGRES_DB
+          value: "ngo_posting_db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: vrms
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+---
+# User Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: vrms-user-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "root"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "update"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vrms-secrets
+              key: JWT_SECRET
+        - name: SERVER_PORT
+          value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: vrms
+spec:
+  type: NodePort
+  selector:
+    app: user-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
+
+---
+# NGO Posting Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngo-posting-service
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ngo-posting-service
+  template:
+    metadata:
+      labels:
+        app: ngo-posting-service
+    spec:
+      containers:
+      - name: ngo-posting-service
+        image: vrms-ngo-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8082
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres:5432/ngo_posting_db"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "postgres"
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          value: "org.postgresql.Driver"
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: "org.hibernate.dialect.PostgreSQLDialect"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "update"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vrms-secrets
+              key: JWT_SECRET
+        - name: SERVER_PORT
+          value: "8082"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngo-posting-service
+  namespace: vrms
+spec:
+  type: NodePort
+  selector:
+    app: ngo-posting-service
+  ports:
+  - port: 8082
+    targetPort: 8082
+    nodePort: 30082
+
+---
+# Matching Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+      - name: matching-service
+        image: vrms-matching-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SERVER_PORT
+          value: "8081"
+        - name: SPRING_APPLICATION_NAME
+          value: "matching-service"
+        - name: POSTING_SERVICE_URL
+          value: "http://ngo-posting-service:8082/api/v1/postings"
+        - name: VOLUNTEER_SERVICE_URL
+          value: "http://user-service:8080/api/v1/users/volunteers"
+        - name: SPRING_CACHE_TYPE
+          value: "simple"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vrms-secrets
+              key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+  namespace: vrms
+spec:
+  type: NodePort
+  selector:
+    app: matching-service
+  ports:
+  - port: 8081
+    targetPort: 8081
+    nodePort: 30081
+
+---
+# Analytics Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-service
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-service
+  template:
+    metadata:
+      labels:
+        app: analytics-service
+    spec:
+      containers:
+      - name: analytics-service
+        image: vrms-analytics-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          value: "root"
+        - name: MYSQL_HOST
+          value: "mysql"
+        - name: MYSQL_DB
+          value: "userdb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-service
+  namespace: vrms
+spec:
+  type: NodePort
+  selector:
+    app: analytics-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30000
+
+---
+# Frontend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: vrms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: vrms-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5174
+        env:
+        - name: VITE_API_BASE_URL
+          value: "http://192.168.49.2:30080"
+        - name: VITE_NGO_API_URL
+          value: "http://192.168.49.2:30082"
+        - name: VITE_MATCHING_API_URL
+          value: "http://192.168.49.2:30081"
+        - name: VITE_ANALYTICS_API_URL
+          value: "http://192.168.49.2:30000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: vrms
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+  - port: 5174
+    targetPort: 5174
+    nodePort: 30174

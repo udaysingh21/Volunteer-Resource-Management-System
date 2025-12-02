@@ -2,7 +2,7 @@
 
 NAMESPACE="vrms"
 
-echo "🔄 Starting port forwarding for VRMS services..."
+echo "Starting port forwarding for VRMS services..."
 
 # User Service
 kubectl port-forward svc/user-service 8080:8080 -n $NAMESPACE >/dev/null 2>&1 &
@@ -25,6 +25,6 @@ kubectl port-forward svc/frontend 5174:5174 -n $NAMESPACE >/dev/null 2>&1 &
 echo "✔ Frontend     → http://localhost:5174"
 
 echo ""
-echo "🎉 All services forwarded!"
+echo "All services forwarded!"
 echo "Press CTRL+C to stop forwarding."
 

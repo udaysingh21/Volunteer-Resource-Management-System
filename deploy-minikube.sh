@@ -4,23 +4,23 @@ set -e
 
 NAMESPACE="vrms"
 
-echo "🚀 Starting VRMS Minikube Deployment"
+echo "Starting VRMS Minikube Deployment"
 echo "==================================="
 
 # Start Minikube if not running
 if ! minikube status | grep -q "Running"; then
-    echo "🔵 Starting Minikube..."
+    echo "Starting Minikube..."
     minikube start --cpus=4 --memory=7837
 fi
 
-echo "🔧 Enabling required addons..."
+echo "Enabling required addons..."
 minikube addons enable ingress
 
-echo "🐳 Switching Docker to Minikube..."
+echo "Switching Docker to Minikube..."
 eval $(minikube docker-env)
 
 # Build microservice images
-echo "📦 Building backend microservice images..."
+echo "Building backend microservice images..."
 
 cd User-Service
 docker build -t vrms-user-service:latest .
@@ -42,16 +42,16 @@ cd VRMS_Frontend/vrms-frontend
 docker build -t vrms-frontend:latest .
 cd ../..
 
-echo "📁 Applying Kubernetes YAMLs..."
+echo "Applying Kubernetes YAMLs..."
 kubectl apply -f vrms-k8s.yaml
 
-echo "⏳ Waiting for pods to initialize..."
+echo "Waiting for pods to initialize..."
 sleep 40
 
 MINIKUBE_IP=$(minikube ip)
 
 echo ""
-echo "🎉 Deployment Complete! Access your services:"
+echo "Deployment Complete! Access your services:"
 echo "-------------------------------------------"
 echo "Frontend:           http://$MINIKUBE_IP:5174"
 echo "User API:           http://$MINIKUBE_IP:8080"
